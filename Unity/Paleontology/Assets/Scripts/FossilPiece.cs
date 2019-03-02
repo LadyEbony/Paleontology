@@ -5,18 +5,23 @@ using UnityEngine;
 public class FossilPiece : MonoBehaviour
 {
     public float integrity;
+    public float mass;
+
+    public FossilController Controller;
+
+    private void Awake() {
+        Controller = GetComponentInParent<FossilController>();
+    }
 
     public void ApplyIntegrityUpdate(float delta){
         integrity += delta;
 
-        if (integrity <= 0)
-            CreateFossilPiece();
+        // Only break once.
+        if (Controller && integrity <= 0) {
+            Controller.SplitFossilPiece(this);
+            Controller = null;
+        }
     }
 
-    private void CreateFossilPiece() {
-        var gameObj = gameObject;
-        gameObj.transform.SetParent(null, true);
-        gameObj.AddComponent<Rigidbody>();
-    }
 
 }

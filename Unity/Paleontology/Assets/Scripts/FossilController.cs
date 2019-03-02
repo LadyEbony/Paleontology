@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using System.Linq;
+
 public class FossilController : MonoBehaviour
 {
 
@@ -12,8 +14,45 @@ public class FossilController : MonoBehaviour
         }
     }
 
+    private List<FossilPiece> _pieces;
+    private List<FossilPiece> pieces {
+        get {
+            if (_pieces == null){
+                _pieces = GetComponentsInChildren<FossilPiece>().ToList();
+                UpdateMass();
+            }
+            return _pieces;
+        }
+    }
+
     ContactPoint[] contacts = new ContactPoint[128];
     int contactLength;
+
+    public void SplitFossilPiece(FossilPiece piece) {
+        // Seperate fossil to its own gameobject with its own rigidboy
+        var gameObj = piece.gameObject;
+        gameObj.transform.SetParent(null, true);
+        var rbTEMP = gameObj.AddComponent<Rigidbody>();
+        rbTEMP.mass = piece.mass;
+
+        pieces.Remove(piece);
+
+        // Destroy once no more exists
+        if (pieces.Count() > 0) {
+            UpdateMass();
+        } else {
+            Destroy(gameObject);
+        }
+
+    }
+
+    private void UpdateMass(){
+        float mass = 0.0f;
+        foreach(var piece in pieces) {
+            mass += piece.mass;
+        }
+        Rb.mass = mass;
+    }
 
     public void OnCollisionEnter(Collision collision) {
         contactLength = collision.GetContacts(contacts);
