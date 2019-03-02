@@ -5,9 +5,11 @@ using UnityEngine;
 public class FossilController : MonoBehaviour
 {
 
-    public void CreateFossilPiece(GameObject gameObj){
-        gameObj.transform.SetParent(null, true);
-        gameObj.AddComponent<Rigidbody>();
+    private Rigidbody _rb;
+    public Rigidbody Rb {
+        get {
+            return _rb ?? (_rb = GetComponent<Rigidbody>());
+        }
     }
 
     ContactPoint[] contacts = new ContactPoint[128];
@@ -25,11 +27,11 @@ public class FossilController : MonoBehaviour
                 uniqueColliders.Add(col);
             }
         }
-        Debug.LogFormat("Count: {0}", uniqueColliders.Count);
 
         // Apply integrity updates
         var force = (collision.impulse / Time.fixedDeltaTime).magnitude;    // Get total force
-        foreach(var uCol in uniqueColliders){
+        // var force = (Rb.mass * collision.relativeVelocity / Time.fixedDeltaTime).magnitude;  // Wrong
+        foreach (var uCol in uniqueColliders){
             uCol.GetComponent<FossilPiece>().ApplyIntegrityUpdate(-force);
         }
     }
