@@ -33,6 +33,7 @@ public class FossilController : MonoBehaviour
         var gameObj = piece.gameObject;
         gameObj.transform.SetParent(null, true);
         var rbTEMP = gameObj.AddComponent<Rigidbody>();
+        gameObj.AddComponent<OVRGrabbable>();
         rbTEMP.mass = piece.mass;
 
         pieces.Remove(piece);

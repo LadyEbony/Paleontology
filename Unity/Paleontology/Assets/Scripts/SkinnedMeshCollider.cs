@@ -14,9 +14,8 @@ public class SkinnedMeshCollider : MonoBehaviour
         meshRenderer = GetComponent<SkinnedMeshRenderer>();
     }
 
-    // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        
+        meshRenderer.BakeMesh(meshCollider.sharedMesh);
     }
 }
